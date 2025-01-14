@@ -133,3 +133,4 @@ Não faço ideia, esse código nem é meu direito.
 1. **Adicionar mais opções de plotagem**: Atualmente, o plot é *hardcoded* para os SPIS de 1, 3, 6, 9, 12, 24, 48 e 60 meses. Seria bom generalizar isso.
 2. **Título e legenda**: Adicionar título e legenda aos gráficos.
 3. **Paralelização**: Paralelizar o cálculo do tempo característico para acelerar o processo.
+4. **Arquivos de logs no lugar certo**: Atualmente, os arquivos de log são salvos no diretório de execução. Seria melhor salvá-los no diretório de saída.
