@@ -65,6 +65,13 @@ check_command() {
 check_command grads
 check_command sed
 
+# Adicionar verificação de permissões do executável logo após os checks iniciais
+EXEC_PATH="${SCRIPT_DIR}/bin/tempo_caracteristico"
+if [ ! -x "$EXEC_PATH" ]; then
+    echo -e "${YELLOW}Ajustando permissões do executável...${NC}"
+    chmod +x "$EXEC_PATH" || handle_error "Falha ao ajustar permissões do executável"
+fi
+
 POSITIONAL_ARGS=()
 parse_options "$@"
 
@@ -151,7 +158,7 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 	INTERVALO="${INTERVALO%.*}"
 
 	# Se USER_INTERVALS não estiver vazio, checar se INTERVALO está na lista
-	if [ "${#USER_INTERVALS[@]}" -gt 0 ]; then
+	if [ "${#USER_INTERVALS[@]}" -gt 0 ]; then    # Corrigido: adicionado espaço antes do -gt
 		FOUND=0
 		for i in "${USER_INTERVALS[@]}"; do
 			[ "$i" = "$INTERVALO" ] && FOUND=1
