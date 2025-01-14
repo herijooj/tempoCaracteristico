@@ -58,9 +58,9 @@ Você pode ler mais sobre o [Calcula SPI](https://github.com/herijooj/calcula_SP
 3. **Ajuda**:
       Para ver as opções de ajuda, execute:
 
-        ```bash
+```bash
         ./tempo_caracteristico -h
-        ```
+```
 
 ## Exemplo
 
@@ -82,8 +82,8 @@ ERROR: Input directory cannot be empty.
 4. **Arquivos de Saída**:
    Para um diretório com os arquivos CTL de entrada como:
 
-   ```bash
-   .
+```bash
+.
 ├── dado_composto_ams_mensal_lab+gpcc_spi12.bin
 ├── dado_composto_ams_mensal_lab+gpcc_spi12.ctl
 ├── dado_composto_ams_mensal_lab+gpcc_spi24.bin
@@ -96,11 +96,11 @@ ERROR: Input directory cannot be empty.
 ├── dado_composto_ams_mensal_lab+gpcc_spi60.ctl
 ├── dado_composto_ams_mensal_lab+gpcc_spi6.bin
 └── dado_composto_ams_mensal_lab+gpcc_spi6.ctl
-   ```
+```
 
    O programa irá gerar os arquivos de saída como:
 
-   ```bash
+```bash
 .
 ├── figuras
 │   ├── dado_composto_ams_mensal_lab+gpcc_spi12.eps
@@ -122,7 +122,7 @@ ERROR: Input directory cannot be empty.
     ├── dado_composto_ams_mensal_lab+gpcc_spi60_tc.ctl
     ├── dado_composto_ams_mensal_lab+gpcc_spi6_tc.bin
     └── dado_composto_ams_mensal_lab+gpcc_spi6_tc.ctl
-    ```
+```
 
 ## Licença
 
