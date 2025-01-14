@@ -1,4 +1,3 @@
-```markdown
 # Tempo Característico
 
 Calcula e plota o Tempo Característico de um CTL
@@ -134,15 +133,3 @@ Não faço ideia, esse código nem é meu, direito.
 1. **Adicionar mais opções de plotagem**: Atualmente, o plot é *hardcoded* para os SPIS de 1, 3, 6, 9, 12, 24, 48 e 60 meses. Seria bom generalizar isso.
 2. **Título e legenda**: Adicionar título e legenda aos gráficos.
 3. **Paralelização**: Paralelizar o cálculo do tempo característico para acelerar o processo.
-```
-
-**Principais mudanças:**
-
-*   **Correções de português:** Vários erros gramaticais e de digitação foram corrigidos.
-*   **Formatação Markdown:** A formatação foi revisada para melhor legibilidade, incluindo uso de itálico para ênfase (*hardcoded*), código em blocos (`calcula_SPI`), e melhor espaçamento.
-*   **Clareza:** Algumas frases foram ligeiramente reformuladas para maior clareza.
-*   **Consistência:** A formatação das listas e exemplos de código foi tornada mais consistente.
-*   **Tradução de termo técnico:** Adicionado a tradução de "Standard Precipitation Index" para "Índice de Precipitação Padronizado" na primeira ocorrência.
-*   **Ênfase em termos:** Utilizado itálico para destacar termos como *hardcoded*.
-
-Com essas mudanças, o README está mais profissional, legível e compreensível.
