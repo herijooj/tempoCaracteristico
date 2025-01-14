@@ -20,14 +20,13 @@ int main(int argc, char *argv[])
 	FILE *arqIn, *arqOut;
 	char *arqNameIn, *arqNameOut;
 	float undef, a, b;
-	float* aux;
 	int nx, ny, nz, nt, i, j, k, l, nMinimo;
 
 /* Leitura dos parâmetros [ENTRADA .bin] [SAIDA .bin] [NX] [NY] [NZ] [NT] [UNDEF] */
 	if (argc != 9)
 	{
 		puts("Parâmetros errados.");
-		return;
+		return 1;
 	}
 	arqNameIn=argv[1];
 	arqNameOut=argv[2];
@@ -42,7 +41,7 @@ int main(int argc, char *argv[])
 	if (arqIn == NULL)  // Se houve erro na abertura
 	{
 		printf("Problemas na abertura do arquivo\n");
-		return;
+		return 1;
 	}
 	float ****matriz = (float****)malloc(nx * sizeof(float***)); //Aloca um Vetor de Ponteiros****
 	float ***saida = (float***)malloc(nx * sizeof(float**));
@@ -68,9 +67,12 @@ int main(int argc, char *argv[])
 			for (k = 0; k < ny; k++)
 			{
 				for (l = 0; l < nx; l++)
-				{
-				fread(&matriz[l][k][j][i], sizeof(float), 1, arqIn);
-				}
+					{
+						if (fread(&matriz[l][k][j][i], sizeof(float), 1, arqIn) != 1) {
+							printf("Erro na leitura do arquivo\n");
+							return 1;
+						}
+					}
 			}
 		}
 	}
@@ -103,7 +105,7 @@ int main(int argc, char *argv[])
 	if (arqOut == NULL) // Se não conseguiu criar
 	{
 		printf("Problemas na CRIACAO do arquivo\n");
-		return;
+		return 1;
 	}
 	for (i = 0; i < nz; i++){
 		for (j = 0; j < ny; j++){
@@ -113,12 +115,12 @@ int main(int argc, char *argv[])
 		}
 	}
 	fclose(arqOut);
-	return;
+	return 0;
 }
 
 float tempo_caracteristico(float serie[], float undef, int nSerie){
 	int N=30; /* Constante tirada do artigo */
-	int i, lag;
+	int i;
 	float t0, somatoriaCor, autoCor;
 
 	somatoriaCor=0;
@@ -138,7 +140,6 @@ float tempo_caracteristico(float serie[], float undef, int nSerie){
 
 float auto_correlacao(float serie[], float undef, int nSerie, int lag){
 	float serie2[nSerie], result;
-	int i;
 
 	desloca_serie(serie, serie2, undef, nSerie, lag);
 	result=correlacao(serie, serie2,undef, nSerie);
@@ -213,7 +214,7 @@ float covariancia(float x[], float y[], float undef, int nSerie){
 }
 
 float desvio_padrao(float vetor[], float undef, int nSerie){
-	float somatoriaMedia, somatoriaVariancia, mediaSerie, variancia, dp;
+	float somatoriaVariancia, mediaSerie, variancia, dp;
 	int i, divisor;
 
 /* Média de todos os valores do vetor */
