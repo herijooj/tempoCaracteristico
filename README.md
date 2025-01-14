@@ -9,7 +9,7 @@ Calcula e plota o Tempo Característico de um CTL
 
 **Alterações por:**
 - **Heric Camargo**  
-  **Ano: 2024**  
+  **Ano: 2025**  
   **Detalhes:**
   - Makefile para compilação
   - Remoção de warnings e variáveis não utilizadas
@@ -32,7 +32,7 @@ Você pode ler mais sobre o [Calcula SPI](https://github.com/herijooj/calcula_SP
 
 ## Requisitos
 
-- **GrADS**: O GrADS é um software de visualização e análise de dados meteorológicos. Ele pode ser baixado em http://cola.gmu.edu/grads/downloads.php.
+- **GrADS**: O GrADS é um software de visualização e análise de dados meteorológicos.
 - **Compilador C**: Você provavelmente já tem um instalado no seu sistema.
 - **Biblioteca de Matemática**: Você provavelmente já tem uma instalada no seu sistema.
 
@@ -126,7 +126,7 @@ ERROR: Input directory cannot be empty.
 
 ## Licença
 
-Não faço ideia, esse código nem é meu, direito.
+Não faço ideia, esse código nem é meu direito.
 
 ## Melhorias Futuras
 
