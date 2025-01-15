@@ -6,7 +6,7 @@
 
 'set lat <LATI> <LATF>'
 'set lon <LONI> <LONF>'
-'set mpdset mres'
+'set mpdset mres brmap'
 
 'set grads off'
 'set grid off'
@@ -32,7 +32,7 @@
 *#########
 'set rgb 70 11 41 150'
 'fshade 0 20 15 maisfresco'
-'set clevs 24 30 36 42 48 54 60'
+'set clevs 30 33 36 39 42 45 48 51 54 57'
 'set ccols 70 4 11 5 12 8 27 2'
 *#########
 
