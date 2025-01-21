@@ -76,12 +76,12 @@ POSITIONAL_ARGS=()
 parse_options "$@"
 
 # Ajustar checagem de argumentos
-if [ ${#POSITIONAL_ARGS[@]} -lt 2 ] || [ ${#POSITIONAL_ARGS[@]} -gt 3 ]; then
+if [ ${#POSITIONAL_ARGS[@]} -lt 1 ] || [ ${#POSITIONAL_ARGS[@]} -gt 3 ]; then
 	show_help
 fi
 
 DIR_CTL="${POSITIONAL_ARGS[0]}"
-BASE_DIR_SAIDA="${POSITIONAL_ARGS[1]}"
+BASE_DIR_SAIDA="${POSITIONAL_ARGS[1]:-output}"
 
 # Validate input parameters
 [ -z "$DIR_CTL" ] && handle_error "Input directory cannot be empty"
@@ -101,8 +101,8 @@ PREFIXO_TITULO="tc"	 #PREFIXO_TITULO+spi_respectivo
 
 VAR="spi" #spi
 
-DIR_SAIDA="${BASE_DIR_SAIDA}/saida"
-DIR_FIGURAS="${BASE_DIR_SAIDA}/figuras"
+DIR_SAIDA="${BASE_DIR_SAIDA}/tempocaracteristico"
+DIR_FIGURAS="${DIR_SAIDA}/figures"
 
 # Cria diretório temporário
 TEMP_DIR=$(mktemp -d)
