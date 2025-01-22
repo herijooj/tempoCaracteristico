@@ -12,7 +12,7 @@
 'set grid on 5'
 'set mpdraw on'
 'set mproj latlon'
-'set map 1 1 7'
+'set map 1 1 7'        
 
 'set vpage 0 11 0 8.5'
 'set parea 1.2 10.2 1.2 7.9'
@@ -30,7 +30,7 @@
 *#### MANCHAS ####
 
 *#########
-'set rgb 70 11 41 150'
+'set rgb 70 11 41 150' 
 'fshade 0 20 15 maisfresco'
 'set clevs 38 40 42 44 46 48 50 52 54 56 58'
 'set ccols 70 4 11 5 12 8 27 2'
@@ -38,69 +38,9 @@
 
 'set gxout grfill'
 'd <VAR>'
-*#################
 
-*##### BARRA #####
-'cbarn * 1'
-*#################
+'cbarn * 1.2'   
+'draw title Tempo Car. SPI<TITLE>'
 
-*##### TITULO ####
-'draw title <TITLE>'
-*#################
-
-'gxprint <NOME_FIG>.'eps
+'gxprint <NOME_FIG>.png -r 300 -a'
 'quit'
-
-**********************************************
-function rgb(NCOR)
-steps=NCOR*2+1
-i=0
-'!rm -f .pipe'
-while(i<steps)
-  '!palheta 'i/(steps-1)' rainbow >> .pipe'
-  i=i+1
-endwhile
-i=0
-while(i<steps)
-  rc=read('.pipe')
-  res=sublin(rc,2)
-  r=subwrd(res,3)
-  g=subwrd(res,6)
-  b=subwrd(res,9)
-  'set rgb 'i+16' 'r' 'g' 'b
-  i=i+1
-endwhile
-rc=close('.pipe')
-'!rm -f .pipe'
-return
-**********************************************
-
-**********************************************
-function calclevs(NIVELSIG, NCOR)
-k=1
-levs='-'NIVELSIG' 'NIVELSIG
-dx=(100-NIVELSIG)/NCOR
-ltemp=NIVELSIG
-while (k<NCOR)
-    ltemp=ltemp+dx
-    levs=-ltemp' 'levs' 'ltemp
-    k=k+1
-endwhile
-say levs
-'set clevs 'levs
-k=1
-cols='16'
-while(k<NCOR)
-    cols=cols' 'k+16
-    k=k+1
-endwhile
-cols=cols' '0
-k=0
-while(k<NCOR)
-    cols=cols' 'k+16+NCOR
-    k=k+1
-endwhile
-say 'cols= 'cols
-'set ccols 'cols
-return
-**********************************************

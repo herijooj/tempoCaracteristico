@@ -199,7 +199,7 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 		s#<LATF>#${LATF}#g;
 		s#<LONI>#${LONI}#g;
 		s#<LONF>#${LONF}#g;
-		s#<TITLE>#${PREFIXO_TITULO}_spi${INTERVALO}#g;
+		s#<TITLE>#${INTERVALO}#g;
 		s#<VAR>#${VAR}#g;
 		s#<NOME_FIG>#${DIR_FIGURAS}/${PREFIXO_FIG}_spi${INTERVALO}#g;" \
 		"${TEMP_GS}" || handle_error "Falha ao ajustar template"
