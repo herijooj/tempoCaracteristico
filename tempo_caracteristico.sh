@@ -101,7 +101,7 @@ PREFIXO_TITULO="tc"	 #PREFIXO_TITULO+spi_respectivo
 
 VAR="spi" #spi
 
-DIR_SAIDA="${BASE_DIR_SAIDA}/tempocaracteristico"
+DIR_SAIDA="${BASE_DIR_SAIDA}/tempocaracteristico/$(basename ${DIR_CTL})"
 DIR_FIGURAS="${DIR_SAIDA}/figures"
 
 # Cria diretório temporário
@@ -175,7 +175,7 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 	mv "${DIR_CTL}/${PREFIXO}_spi${INTERVALO}_tc."* "${DIR_SAIDA}" || \
 		handle_error "Falha ao mover arquivos de saída para intervalo ${INTERVALO}"
 
-    ARQ_TEMPLATE="${SCRIPT_DIR}/src/gs/gs_spi${INTERVALO}"
+    ARQ_TEMPLATE="${SCRIPT_DIR}/src/gs/gs"
 
 	[ ! -f "${ARQ_TEMPLATE}" ] && handle_error "Template ${ARQ_TEMPLATE} não encontrado"
 	TEMP_GS="${TEMP_DIR}/temp${INTERVALO}.gs"
@@ -193,6 +193,12 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 	LAT_DELTA="$(echo "$YDEF_LINE" | awk '{print $5}')"
 	NYDEF="$(echo "$YDEF_LINE" | awk '{print $2}')"
 	LATF=$(awk -v start="$LATI" -v delta="$LAT_DELTA" -v n="$NYDEF" 'BEGIN {print start + (n-1)*delta}')
+
+    if [ "$(echo "$LATI > $LATF" | bc -l)" -eq 1 ]; then
+        TMP="$LATI"
+        LATI="$LATF"
+        LATF="$TMP"
+    fi
 
 	sed -i "s#<CTL>#${DIR_SAIDA}/${PREFIXO}_spi${INTERVALO}_tc.ctl#g;
 		s#<LATI>#${LATI}#g;
