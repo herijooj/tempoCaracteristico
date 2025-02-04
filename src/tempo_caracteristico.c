@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
 	FILE *arqIn, *arqOut;
 	char *arqNameIn, *arqNameOut;
-	float undef, a, b;
+	float undef;
 	int nx, ny, nz, nt, i, j, k, l, nMinimo;
 
 /* Leitura dos parâmetros [ENTRADA .bin] [SAIDA .bin] [NX] [NY] [NZ] [NT] [UNDEF] */
@@ -83,17 +83,20 @@ int main(int argc, char *argv[])
 		{
 			for (k = 0; k < nz; k++)
 			{
-				a=conta_dados(matriz[i][j][k], undef, nt);
-				b=((nt*nMinimo)/100);
-				printf("Calculo: %f %f\n", a, b);
-				if (conta_dados(matriz[i][j][k] , undef, nt) < ((nt*nMinimo)/100))
+				// Substituir variáveis "a" e "b" por nValid/pctMinimo e evitar chamada repetida
+				int nValid = conta_dados(matriz[i][j][k], undef, nt);
+				float pctMinimo = ((float)nt * nMinimo) / 100.0f;
+
+				// printf("Calculo: %d %f\n", nValid, pctMinimo);
+
+				if (nValid < pctMinimo)
 				{
-					saida[i][j][k]=undef;
+					saida[i][j][k] = undef;
 					printf("Dados insuficientes na quadrícula : nx = %d , ny = %d , nt = %d\n", i, j, k);
 				}
 				else
 				{
-					saida[i][j][k]=tempo_caracteristico(matriz[i][j][k] , undef, nt);
+					saida[i][j][k] = tempo_caracteristico(matriz[i][j][k], undef, nt);
 				}
 			}
 		}
