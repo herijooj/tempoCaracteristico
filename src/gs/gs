@@ -27,5 +27,8 @@
 'cbarn * 1.2'   
 'draw title Tempo Car. SPI<TITLE>'
 
+'set string 1 l 5'
+'draw string '0.5' '0.2' <BOTTOM>' 
+
 'gxprint <NOME_FIG>.png'
 'quit'

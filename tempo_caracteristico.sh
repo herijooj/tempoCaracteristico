@@ -38,7 +38,7 @@ function parse_options() {
 
 function show_help() {
     echo -e "${YELLOW}Uso:${NC} ${GREEN}./tempo_caracteristico.sh${NC} ${BLUE}<input_directory>${NC} ${BLUE}<output_directory>${NC} ${BLUE}[intervals]${NC} ${BLUE}[options]${NC}"
-    echo -e "   Este script executa e plota o tempo característico para arquivos .ctl contendo '_spi'."
+    echo -e "   Este script executa e plota o tempo característico para arquivos .ctl de SPI."
     echo -e "   Ele gera arquivos .bin, .ctl e figuras correspondentes usando GrADS."
     echo -e "${RED}Atenção!${NC} Verifique se todos os comandos necessários estão disponíveis."
     echo -e "${YELLOW}Opções:${NC}"
@@ -94,13 +94,6 @@ BASE_DIR_SAIDA="${POSITIONAL_ARGS[1]:-output}"
 # Configurar PORC_MIN_DADOS com valor padrão se não foi definido
 PORC_MIN_DADOS=${PORC_MIN_DADOS:-75}
 
-# Rest of your variables
-###############PAR-GRADS###############
-
-PREFIXO_TITULO="tc"	 #PREFIXO_TITULO+spi_respectivo
-
-VAR="spi" #spi
-
 DIR_SAIDA="${BASE_DIR_SAIDA}/tempocaracteristico/$(basename ${DIR_CTL})"
 DIR_FIGURAS="${DIR_SAIDA}/figures"
 
@@ -148,14 +141,78 @@ function run_tempo_caracteristico() {
     return 0
 }
 
+# Função para analisar o arquivo .ctl
+parse_ctl_file() {
+    local ctl_file="$1"
+    # Inicializa variáveis
+    NX=""
+    NY=""
+    NT=""
+    DSET=""
+    TITLE=""
+    VARIABLES=()
+    IN_VARS_BLOCK=false
+
+    while read -r line; do
+        # Remove espaços em branco no início e no fim and comments more robustly
+        line="$(sed -e 's/#.*$//' <<<"$line")" # Remove comments after #
+        line="$(echo -e "${line}" | sed -e 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+        # Ignora linhas vazias
+        if [[ -z "$line" ]]; then
+            continue
+        fi
+
+        if [[ "$line" =~ ^title[[:space:]]+(.*) ]]; then
+            TITLE="${BASH_REMATCH[1]}"
+        elif [[ "$line" =~ ^xdef[[:space:]]+([0-9]+)[[:space:]]+.* ]]; then
+            NX=${BASH_REMATCH[1]}
+        elif [[ "$line" =~ ^ydef[[:space:]]+([0-9]+)[[:space:]]+.* ]]; then
+            NY=${BASH_REMATCH[1]}
+        elif [[ "$line" =~ ^tdef[[:space:]]+([0-9]+)[[:space:]]+.* ]]; then
+            NT=${BASH_REMATCH[1]}
+        elif [[ "$line" =~ ^dset[[:space:]]+(\^*)(.*) ]]; then
+            DSET="${line#dset }"
+            if [[ "${BASH_REMATCH[1]}" == "^" ]]; then
+                DSET_DIR="${DIR_CTL}"
+                DSET_FILE="${BASH_REMATCH[2]}"
+            else
+                DSET_PATH="${BASH_REMATCH[2]}"
+                DSET_DIR=$(dirname "${DSET_PATH}")
+                DSET_FILE=$(basename "${DSET_PATH}")
+            fi
+        elif [[ "$line" =~ ^vars[[:space:]]+ ]]; then
+            IN_VARS_BLOCK=true
+        elif [[ "$line" =~ ^endvars ]]; then
+            IN_VARS_BLOCK=false
+        elif $IN_VARS_BLOCK; then
+            # Pega o nome da variável
+            var_line=$(echo "$line" | awk '{print $1}')
+            var_name=$(echo "$var_line" | sed 's/[=>].*$//')
+            VARIABLES+=("$var_name")
+        fi
+    done < "${ctl_file}"
+}
+
 # Novo loop que varre todos os arquivos .ctl com "_spi"
-echo -e "${GREEN}Iniciando processamento...${NC}"
+echo -e "${GREEN}${BOLD}=== Iniciando operação ===${NC}"
+echo -e "${BLUE}[CONFIG]${NC} Porcentagem mínima de dados: ${PORC_MIN_DADOS}"
+echo -e "${BLUE}[CONFIG]${NC} Diretório de entrada: ${DIR_CTL}"
+echo -e "${BLUE}[CONFIG]${NC} Diretório de saída: ${DIR_SAIDA}"
+echo -e "${BLUE}[CONFIG]${NC} Diretório de figuras: ${DIR_FIGURAS}"
+
 for file in "${DIR_CTL}"/*_spi*.ctl; do
 	ARQUIVO=$(basename "$file")
 	PREFIXO="${ARQUIVO%_spi*}"
-	PREFIXO_FIG="${PREFIXO}"
+	#PREFIXO_FIG="${PREFIXO}"
 	INTERVALO="${ARQUIVO#*_spi}"
 	INTERVALO="${INTERVALO%.*}"
+
+    # Analisa o arquivo .ctl
+    parse_ctl_file "$file"
+
+    # Assume que a variável SPI é a primeira variável listada no arquivo .ctl
+    VAR="${VARIABLES[0]}"
+    PREFIXO_FIG="${PREFIXO}"
 
 	# Se USER_INTERVALS não estiver vazio, checar se INTERVALO está na lista
 	if [ "${#USER_INTERVALS[@]}" -gt 0 ]; then    # Corrigido: adicionado espaço antes do -gt
@@ -200,6 +257,9 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
         LATF="$TMP"
     fi
 
+    # just the filename, not the path
+    BOTTOM=$(basename "$file")
+
 	sed -i "s#<CTL>#${DIR_SAIDA}/${PREFIXO}_spi${INTERVALO}_tc.ctl#g;
 		s#<LATI>#${LATI}#g;
 		s#<LATF>#${LATF}#g;
@@ -207,6 +267,7 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 		s#<LONF>#${LONF}#g;
 		s#<TITLE>#${INTERVALO}#g;
 		s#<VAR>#${VAR}#g;
+        s#<BOTTOM>#${BOTTOM}#g;
 		s#<NOME_FIG>#${DIR_FIGURAS}/${PREFIXO_FIG}_spi${INTERVALO}#g;" \
 		"${TEMP_GS}" || handle_error "Falha ao ajustar template"
 
