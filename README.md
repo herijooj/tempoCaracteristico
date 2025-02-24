@@ -2,7 +2,7 @@
 
 Calcula e plota o Tempo Característico de um CTL
 
-![SPI](src/pics/tc_spi3.png)
+![SPI](src/pics/EC-Earth3_Historical+SSP245_R4_1950-2020_spi12.png)
 
 **Implementado por Eduardo Machado**  
 **Ano: 2015**
