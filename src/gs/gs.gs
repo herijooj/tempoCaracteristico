@@ -27,14 +27,11 @@
 'set clab on'
 'set clopts 1 4 0.15'
 
-*#### MANCHAS ####
-
-*#########
 'set rgb 70 11 41 150' 
 'fshade 0 20 15 maisfresco'
-'set clevs  0.5 1 1.5 2 2.5 3 3.5'
-'set ccols 70 4 11 5 12 8 27 2'
-*#########
+'set clevs <CINT>'
+'set ccols <CCOL>'
+
 
 'set gxout grfill'
 'd <VAR>'
@@ -45,5 +42,5 @@
 'set string 1 l 5'
 'draw string '0.5' '0.2' <BOTTOM>' 
 
-'gxprint <NOME_FIG>.png -r 300 -a'
+'gxprint <NOME_FIG>.png'
 'quit'

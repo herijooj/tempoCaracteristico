@@ -61,6 +61,32 @@ check_command() {
 	command -v "$1" >/dev/null 2>&1 || show_help "Required command '$1' not found"
 }
 
+# Function to determine CLEVS and CCOLORS based on INTERVALO
+get_clevs() {
+    local interval="$1"
+    
+    declare -A intervals=(
+        [1]="0.5 1 1.5 2 2.5 3 3.5"
+        [3]="5 10 15 20 25 30 35 40 45"
+        [6]="5 10 15 20 25 30 35 40 45"
+        [9]="5 10 15 20 25 30 35 40 45"
+        [12]="5 10 15 20 25 30 35 40 45"
+        [24]="10 15 20 25 30 35 40 45 50 55"
+        [48]="30 33 36 39 42 45 48 51 54 57"
+        [60]="38 40 42 44 46 48 50 52 54 56 58"
+    )
+    
+    if [[ -n "${intervals[$interval]}" ]]; then
+        echo "${intervals[$interval]}"
+    else
+        handle_error "Intervalo inválido: $interval"
+    fi
+}
+
+get_colors() {
+    echo "70 4 11 5 12 8 27 2"
+}
+
 # Check for required commands
 check_command grads
 check_command sed
@@ -211,8 +237,21 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
     parse_ctl_file "$file"
 
     # Assume que a variável SPI é a primeira variável listada no arquivo .ctl
-    VAR="${VARIABLES[0]}"
+    # se a variável SPI não for encontrada, tenta ler do nome do arquivo
+    if [[ "${#VARIABLES[@]}" -gt 0 ]]; then
+        echo -e "${BLUE}Lendo variáveis do arquivo .ctl $(basename "$file")${NC}"
+        VAR="${VARIABLES[0]}"
+    else
+        echo -e "${YELLOW}Variável SPI não encontrada no .ctl; Usando Filename: $(basename "$file")${NC}"
+        # o intervalo está depois do _spi
+        VAR="${ARQUIVO%_spi*}"
+        VAR="${VAR##*_}"
+    fi
     PREFIXO_FIG="${PREFIXO}"
+    
+    if [[ -z "$VAR" ]]; then
+        handle_error "Variável SPI não encontrada no arquivo .ctl ou no nome do arquivo"
+    fi
 
 	# Se USER_INTERVALS não estiver vazio, checar se INTERVALO está na lista
 	if [ "${#USER_INTERVALS[@]}" -gt 0 ]; then    # Corrigido: adicionado espaço antes do -gt
@@ -232,7 +271,7 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 	mv "${DIR_CTL}/${PREFIXO}_spi${INTERVALO}_tc."* "${DIR_SAIDA}" || \
 		handle_error "Falha ao mover arquivos de saída para intervalo ${INTERVALO}"
 
-    ARQ_TEMPLATE="${SCRIPT_DIR}/src/gs/gs"
+    ARQ_TEMPLATE="${SCRIPT_DIR}/src/gs/gs.gs"
 
 	[ ! -f "${ARQ_TEMPLATE}" ] && handle_error "Template ${ARQ_TEMPLATE} não encontrado"
 	TEMP_GS="${TEMP_DIR}/temp${INTERVALO}.gs"
@@ -259,6 +298,8 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 
     # just the filename, not the path
     BOTTOM=$(basename "$file")
+    CINT=$(get_clevs "$INTERVALO")
+    CCOL=$(get_colors)
 
 	sed -i "s#<CTL>#${DIR_SAIDA}/${PREFIXO}_spi${INTERVALO}_tc.ctl#g;
 		s#<LATI>#${LATI}#g;
@@ -268,7 +309,9 @@ for file in "${DIR_CTL}"/*_spi*.ctl; do
 		s#<TITLE>#${INTERVALO}#g;
 		s#<VAR>#${VAR}#g;
         s#<BOTTOM>#${BOTTOM}#g;
-		s#<NOME_FIG>#${DIR_FIGURAS}/${PREFIXO_FIG}_spi${INTERVALO}#g;" \
+		s#<NOME_FIG>#${DIR_FIGURAS}/${PREFIXO_FIG}_spi${INTERVALO}#g;
+        s#<CINT>#${CINT}#g;
+        s#<CCOL>#${CCOL}#g;" \
 		"${TEMP_GS}" || handle_error "Falha ao ajustar template"
 
 	echo -e "${YELLOW}Executando o template GrADS para intervalo ${INTERVALO}...${NC}"
